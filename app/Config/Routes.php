@@ -16,6 +16,9 @@ $routes->get('appointments', 'Appointments::index');
 $routes->get('appointments/create', 'Appointments::create');
 $routes->post('appointments/store', 'Appointments::store');
 $routes->get('appointments/cancel/(:num)', 'Appointments::cancel/$1');
+$routes->get('appointments/edit/(:num)', 'Appointments::edit/$1');
+$routes->post('appointments/update/(:num)', 'Appointments::update/$1');
+$routes->get('appointments/delete/(:num)', 'Appointments::delete/$1');
 
 // Admin routes
 $routes->group('admin', ['filter' => 'admin'], function($routes) {

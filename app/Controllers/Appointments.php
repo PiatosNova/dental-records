@@ -65,13 +65,73 @@ class Appointments extends BaseController
     public function cancel($id)
     {
         $appointmentModel = new AppointmentModel();
-        $appointment = $appointmentModel->find($id);
+        $appointment = $appointmentModel->where('user_id', session()->get('user_id'))
+                                      ->find($id);
 
-        if ($appointment && $appointment['user_id'] == session()->get('user_id')) {
-            $appointmentModel->update($id, ['status' => 'cancelled']);
-            session()->setFlashdata('success', 'Appointment cancelled successfully.');
+        if (!$appointment) {
+            return redirect()->to('appointments')->with('error', 'Appointment not found');
         }
 
-        return redirect()->to('appointments');
+        $appointmentModel->update($id, ['status' => 'cancelled']);
+        return redirect()->to('appointments')->with('success', 'Appointment cancelled successfully');
+    }
+
+    public function edit($id)
+    {
+        $appointmentModel = new AppointmentModel();
+        $appointment = $appointmentModel->where('user_id', session()->get('user_id'))
+                                      ->find($id);
+
+        if (!$appointment) {
+            return redirect()->to('appointments')->with('error', 'Appointment not found');
+        }
+
+        return view('appointments/edit', [
+            'appointment' => $appointment
+        ]);
+    }
+
+    public function update($id)
+    {
+        $appointmentModel = new AppointmentModel();
+        $appointment = $appointmentModel->where('user_id', session()->get('user_id'))
+                                      ->find($id);
+
+        if (!$appointment) {
+            return redirect()->to('appointments')->with('error', 'Appointment not found');
+        }
+
+        $rules = [
+            'service' => 'required',
+            'appointment_date' => 'required|valid_date',
+            'appointment_time' => 'required'
+        ];
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('error', $this->validator->getErrors());
+        }
+
+        $data = [
+            'service' => $this->request->getPost('service'),
+            'appointment_date' => $this->request->getPost('appointment_date'),
+            'appointment_time' => $this->request->getPost('appointment_time')
+        ];
+
+        $appointmentModel->update($id, $data);
+        return redirect()->to('appointments')->with('success', 'Appointment updated successfully');
+    }
+
+    public function delete($id)
+    {
+        $appointmentModel = new AppointmentModel();
+        $appointment = $appointmentModel->where('user_id', session()->get('user_id'))
+                                      ->find($id);
+
+        if (!$appointment) {
+            return redirect()->to('appointments')->with('error', 'Appointment not found');
+        }
+
+        $appointmentModel->delete($id);
+        return redirect()->to('appointments')->with('success', 'Appointment deleted successfully');
     }
 } 

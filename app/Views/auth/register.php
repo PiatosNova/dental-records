@@ -41,7 +41,7 @@
 <body>
     <div class="welcome-banner text-center">
         <div class="container">
-            <h1 class="display-5 mb-2">Dental Appointment</h1>
+            <h1 class="display-5 mb-2">SmileEase</h1>
             <p class="lead mb-0">Create your account to manage dental appointments</p>
         </div>
     </div>
